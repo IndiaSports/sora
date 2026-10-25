@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sora Sompeng — Brushed Steel Transliterator & Cipher</title>
+  <!-- Google Fonts: Inter, JetBrains Mono & Noto Sans Sora Sompeng for universal glyph rendering -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Sora+Sompeng&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --steel-dark: #0b0d11;
+      --steel-panel: #161a21;
+      --steel-highlight: rgba(255, 255, 255, 0.14);
+      --steel-border: rgba(255, 255, 255, 0.08);
+      --accent-cyan: #38bdf8;
+      --accent-ice: #e0f2fe;
+      --accent-amber: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: #090b0e;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.12), transparent 55%),
+        radial-gradient(circle at 85% 90%, rgba(148, 163, 184, 0.08), transparent 50%),
+        repeating-linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.012) 0px,
+          rgba(255, 255, 255, 0.012) 1px,
+          transparent 1px,
+          transparent 3px
+        );
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px 14px;
+      color: #e2e8f0;
+    }
+
+    /* Brushed Steel Chassis Card */
+    .steel-chassis {
+      width: 100%;
+      max-width: 720px;
+      background: 
+        linear-gradient(145deg, rgba(36, 42, 52, 0.96) 0%, rgba(20, 24, 31, 0.98) 55%, rgba(15, 18, 24, 0.99) 100%);
+      border-radius: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.22);
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+      border-right: 1px solid rgba(0, 0, 0, 0.6);
+      border-bottom: 2px solid rgba(0, 0, 0, 0.85);
+      box-shadow: 
+        0 28px 60px rgba(0, 0, 0, 0.85),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      padding: 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle Brushed Metal Grain Overlay */
+    .steel-chassis::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        0deg,
+        rgba(255, 255, 255, 0.014) 0px,
+        rgba(255, 255, 255, 0.014) 1px,
+        transparent 1px,
+        transparent 2px
+      );
+      z-index: 0;
+    }
+
+    /* Corner Hex Screws */
+    .screw {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #475569, #0f172a);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.9), 0 1px 0 rgba(255,255,255,0.1);
+      position: absolute;
+      z-index: 2;
+    }
+    .screw::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 1px;
+      right: 1px;
+      height: 1px;
+      background: rgba(0, 0, 0, 0.75);
+      transform: rotate(35deg);
+    }
+    .screw-tl { top: 12px; left: 12px; }
+    .screw-tr { top: 12px; right: 12px; }
+    .screw-bl { bottom: 12px; left: 12px; }
+    .screw-br { bottom: 12px; right: 12px; }
+
+    .chassis-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Metallic Text Effect */
+    .metallic-title {
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 65%, #64748b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.4);
+    }
+
+    /* Badge */
+    .steel-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      background: linear-gradient(180deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+      color: #38bdf8;
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.15), inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+
+    /* Machined Inset Wells (Inputs & Outputs) */
+    .machined-well {
+      background: #0a0d12;
+      border-radius: 12px;
+      border-top: 2px solid #040608;
+      border-left: 1px solid #06080b;
+      border-right: 1px solid rgba(255, 255, 255, 0.07);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.85);
+      transition: all 0.2s ease;
+    }
+
+    .machined-well:focus-within {
+      border-color: rgba(56, 189, 248, 0.55);
+      box-shadow: 
+        inset 0 4px 12px rgba(0, 0, 0, 0.85),
+        0 0 0 3px rgba(56, 189, 248, 0.14);
+    }
+
+    textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      padding: 14px 16px;
+      color: #f1f5f9;
+      font-size: 15px;
+      line-height: 1.6;
+      outline: none;
+      resize: vertical;
+    }
+
+    textarea::placeholder {
+      color: #475569;
+    }
+
+    /* Brushed Steel Buttons */
+    .btn-steel {
+      background: linear-gradient(180deg, #2d3542 0%, #1d232d 50%, #151a22 100%);
+      color: #cbd5e1;
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      border-right: 1px solid rgba(0, 0, 0, 0.6);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.8);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      border-radius: 9px;
+      font-weight: 600;
+      font-size: 13px;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      user-select: none;
+    }
+
+    .btn-steel:hover {
+      background: linear-gradient(180deg, #374151 0%, #242b38 50%, #1a202c 100%);
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .btn-steel:active {
+      transform: translateY(0px);
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6);
+    }
+
+    .btn-steel.active {
+      background: linear-gradient(180deg, rgba(14, 116, 144, 0.45) 0%, rgba(15, 23, 42, 0.9) 100%);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+
+    /* Primary Titanium Action Button */
+    .btn-titanium {
+      background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 45%, #94a3b8 100%);
+      color: #090d14;
+      border-top: 1px solid #ffffff;
+      border-bottom: 1px solid #475569;
+      box-shadow: 0 4px 14px rgba(255, 255, 255, 0.12), inset 0 1px 0 #ffffff;
+      border-radius: 9px;
+      font-weight: 700;
+      font-size: 13.5px;
+      transition: all 0.18s ease;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-titanium:hover {
+      background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 50%, #cbd5e1 100%);
+      box-shadow: 0 6px 18px rgba(56, 189, 248, 0.28), inset 0 1px 0 #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .btn-titanium:active {
+      transform: translateY(0);
+    }
+
+    /* Preset Chip Pills */
+    .preset-pill {
+      font-size: 11.5px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .preset-pill:hover {
+      border-color: #38bdf8;
+      color: #e0f2fe;
+      background: rgba(56, 189, 248, 0.12);
+    }
+
+    /* Sora Sompeng Output Display */
+    .sora-output {
+      font-family: 'Noto Sans Sora Sompeng', 'JetBrains Mono', sans-serif;
+      font-size: 21px;
+      line-height: 1.75;
+      letter-spacing: 1px;
+      color: #7dd3fc;
+      min-height: 115px;
+      max-height: 260px;
+      overflow-y: auto;
+      padding: 16px;
+      word-break: break-word;
+      white-space: pre-wrap;
+      text-shadow: 0 0 14px rgba(56, 189, 248, 0.22);
+    }
+
+    .sora-output.empty {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #475569;
+      font-style: italic;
+      letter-spacing: 0;
+      text-shadow: none;
+    }
+
+    /* LED Indicator Dot */
+    .led-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #475569;
+      display: inline-block;
+      transition: all 0.2s ease;
+    }
+    .led-dot.on {
+      background: #38bdf8;
+      box-shadow: 0 0 8px #38bdf8;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0a0d12;
+      border-radius: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 6px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="steel-chassis">
+    <!-- Industrial Corner Screws -->
+    <div class="screw screw-tl"></div>
+    <div class="screw screw-tr"></div>
+    <div class="screw screw-bl"></div>
+    <div class="screw screw-br"></div>
+
+    <div class="chassis-content">
+      <!-- Header -->
+      <div class="flex flex-wrap items-center justify-between gap-3 pb-4 mb-5 border-b border-white/10">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-slate-700 via-slate-800 to-slate-950 border border-white/15 shadow-inner text-sky-400 font-bold text-xl">
+            𖄐
+          </div>
+          <div>
+            <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight metallic-title">
+              SORA SOMPENG FORGE
+            </h1>
+            <p class="text-xs text-slate-400 tracking-wide">
+              Sanskrit Mantra, Hindi &amp; English &#8594; <span class="text-slate-300 font-mono">U+110D0</span> Script Engine
+            </p>
+          </div>
+        </div>
+        <div class="steel-badge flex items-center gap-2">
+          <span class="led-dot on"></span>
+          <span>UNICODE 110D0–110FF</span>
+        </div>
+      </div>
+
+      <!-- Mode Switcher Bar -->
+      <div class="grid grid-cols-3 gap-2 mb-4 p-1.5 rounded-xl bg-black/40 border border-white/5">
+        <button id="modeVisualBtn" onclick="setMode('visual')" class="btn-steel active py-2 px-3 text-xs sm:text-sm">
+          <span>𖄓𖄢𖄡 Visual Cipher</span>
+        </button>
+        <button id="modePhoneticBtn" onclick="setMode('phonetic')" class="btn-steel py-2 px-3 text-xs sm:text-sm">
+          <span>ॐ Phonetic Lipi</span>
+        </button>
+        <button id="modeDecodeBtn" onclick="setMode('decode')" class="btn-steel py-2 px-3 text-xs sm:text-sm">
+          <span>&#8644; Decode Sora</span>
+        </button>
+      </div>
+
+      <!-- Quick Sample Presets -->
+      <div class="mb-4">
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+            Quick Mantras &amp; Test Presets
+          </span>
+          <button onclick="clearAll()" class="text-[11px] text-slate-400 hover:text-sky-400 transition">
+            Clear Input
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-1.5">
+          <button class="preset-pill" onclick="loadSample('ॐ नमः शिवाय')">
+            ॐ नमः शिवाय
+          </button>
+          <button class="preset-pill" onclick="loadSample('ॐ भूर्भुवः स्वः तत्सवितुर्वरेण्यं भर्गो देवस्य धीमहि धियो यो नः प्रचोदयात् ॥')">
+            गायत्री मंत्र (Gayatri Mantra)
+          </button>
+          <button class="preset-pill" onclick="loadSample('ॐ त्र्यम्बकं यजामहे सुगन्धिं पुष्टिवर्धनम् उर्वारुकमिव बन्धनान्मृत्योर्मुक्षीय मामृतात् ॥')">
+            महामृत्युंजय मंत्र
+          </button>
+          <button class="preset-pill" onclick="loadSample('वक्रतुण्ड महाकाय सूर्यकोटि समप्रभ निर्विघ्नं कुरु मे देव सर्वकार्येषु सर्वदा ॥')">
+            गणेश श्लोक
+          </button>
+          <button class="preset-pill" onclick="loadSample('CAN YOU SEE THIS TEST ?')">
+            CAN YOU SEE THIS TEST ?
+          </button>
+        </div>
+      </div>
+
+      <!-- Input Section -->
+      <div class="mb-3">
+        <div class="flex items-center justify-between mb-1.5">
+          <label for="inputField" id="inputLabel" class="text-xs font-bold uppercase tracking-wider text-slate-300">
+            Plain Text / Sanskrit Devanagari Input
+          </label>
+          <span id="charCount" class="text-[11px] font-mono text-slate-400">0 chars</span>
+        </div>
+        <div class="machined-well">
+          <textarea 
+            id="inputField" 
+            rows="3" 
+            placeholder="Type English, Hindi, or Sanskrit Mantra (e.g., ॐ नमः शिवाय or CAN YOU SEE THIS TEST ?)..."
+            oninput="processConversion()"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Intermediate Sanskrit Phonetic Strip (Auto-displays when Devanagari is detected) -->
+      <div id="translitStrip" class="hidden mb-4 px-3.5 py-2.5 rounded-lg bg-slate-900/90 border border-sky-500/25 flex items-center justify-between gap-2">
+        <div class="text-xs text-slate-400 overflow-x-auto whitespace-nowrap">
+          <span class="text-sky-400 font-semibold uppercase tracking-wider mr-1.5">Sanskrit Phonetic Bridge:</span>
+          <span id="translitPreview" class="font-mono text-slate-200"></span>
+        </div>
+        <span class="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/20 shrink-0">
+          Devanagari &#8594; Sora
+        </span>
+      </div>
+
+      <!-- Action Buttons Row (Like the Binary Example + Swap) -->
+      <div class="flex flex-wrap sm:flex-nowrap gap-2.5 my-4">
+        <button id="toggleBtn" class="btn-steel flex-1 py-3 px-4" onclick="toggleAIPrompt()">
+          <span id="aiLed" class="led-dot"></span>
+          <span id="toggleBtnText">Prompt for AI: OFF</span>
+        </button>
+
+        <button class="btn-steel py-3 px-4" onclick="swapInputOutput()" title="Move output to input to test reverse decoding">
+          <span>&#8645; Swap</span>
+        </button>
+
+        <button class="btn-titanium flex-1 py-3 px-5" onclick="copyResult()">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span id="copyBtnText">Copy Sora Sompeng</span>
+        </button>
+      </div>
+
+      <!-- Output Section -->
+      <div class="relative">
+        <div class="flex items-center justify-between mb-1.5">
+          <label id="outputLabel" class="text-xs font-bold uppercase tracking-wider text-slate-300">
+            Sora Sompeng Stream Output
+          </label>
+          <span id="modeIndicator" class="text-[11px] font-mono text-sky-400">
+            Mode: Visual Cipher (A–Z + Devanagari)
+          </span>
+        </div>
+
+        <div class="machined-well">
+          <div id="outputBox" class="sora-output empty">Converted Sora Sompeng script yahan aayega...</div>
+        </div>
+
+        <!-- Status & Copy Toast Bar -->
+        <div class="flex items-center justify-between mt-2 min-h-[20px]">
+          <div id="copyToast" class="text-xs font-semibold text-sky-400 opacity-0 transition-opacity duration-200 flex items-center gap-1.5">
+            <span>&#10003; Copied to clipboard!</span>
+          </div>
+          <button onclick="toggleMatrix()" class="text-xs text-slate-400 hover:text-slate-200 font-medium underline underline-offset-4 ml-auto">
+            <span id="matrixToggleLabel">&#9662; View Sora Sompeng A–Z &amp; 0–9 Key Matrix</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Collapsible Glyph Reference Matrix (Click any glyph to insert) -->
+      <div id="glyphMatrixPanel" class="hidden mt-4 pt-4 border-t border-white/10">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-300">
+            Interactive Sora Sompeng Glyph Key (Click to Insert)
+          </span>
+          <span class="text-[11px] text-slate-400">U+110D0 – U+110F9</span>
+        </div>
+        <div id="glyphGrid" class="grid grid-cols-6 sm:grid-cols-9 gap-1.5"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * ============================================================================
+     * 1. SORA SOMPENG UNICODE CIPHER & PHONETIC TABLES (U+110D0 - U+110FF)
+     * ============================================================================
+     * Exact Visual Cipher Map matching:
+     * "𖄓𖄢𖄡 𖄟𖄧𖄦 𖄐𖄣𖄣 𖄑𖄝𖄤𖄐 𖄑𖄣𖄐𖄑 ?" -> "CAN YOU SEE THIS TEST ?"
+     */
+    const VISUAL_CIPHER_MAP = {
+      'A': '𖄢', 'B': '𖄚', 'C': '𖄓', 'D': '𖄔', 'E': '𖄣',
+      'F': '𖄙', 'G': '𖄕', 'H': '𖄝', 'I': '𖄤', 'J': '𖄛',
+      'K': '𖄞', 'L': '𖄠', 'M': '𖄖', 'N': '𖄡', 'O': '𖄧',
+      'P': '𖄘', 'Q': '𖄨', 'R': '𖄜', 'S': '𖄐', 'T': '𖄑',
+      'U': '𖄦', 'V': '𖄗', 'W': '𖄥', 'X': '𖄒', 'Y': '𖄟',
+      'Z': '𖄐',
+      // Sora Sompeng Native Digits (U+110F0 to U+110F9)
+      '0': '𖄰', '1': '𖄱', '2': '𖄲', '3': '𖄳', '4': '𖄴',
+      '5': '𖄵', '6': '𖄶', '7': '𖄷', '8': '𖄸', '9': '𖄹'
+    };
+
+    /**
+     * Authentic Phonetic Sora Sompeng Map (Mangei Gomango's 1936 Sound Values):
+     * 𖄐 SAH, 𖄑 TAH, 𖄒 BAH, 𖄓 CAH, 𖄔 DAH, 𖄕 GAH, 𖄖 MAH, 𖄗 NGAH,
+     * 𖄘 LAH, 𖄙 NAH, 𖄚 WAH, 𖄛 PAH, 𖄜 YAH, 𖄝 RAH, 𖄞 HAH, 𖄟 KAH,
+     * 𖄠 JAH, 𖄡 NYAH, 𖄢 AH, 𖄣 EE, 𖄤 IH, 𖄥 UH, 𖄦 OH, 𖄧 EH, 𖄨 MAE
+     */
+    const PHONETIC_SORA_MAP = {
+      'A': '𖄢', 'B': '𖄒', 'C': '𖄓', 'D': '𖄔', 'E': '𖄣',
+      'F': '𖄛', 'G': '𖄕', 'H': '𖄞', 'I': '𖄤', 'J': '𖄠',
+      'K': '𖄟', 'L': '𖄘', 'M': '𖄖', 'N': '𖄙', 'O': '𖄦',
+      'P': '𖄛', 'Q': '𖄟', 'R': '𖄝', 'S': '𖄐', 'T': '𖄑',
+      'U': '𖄥', 'V': '𖄚', 'W': '𖄚', 'X': '𖄐', 'Y': '𖄜',
+      'Z': '𖄠',
+      '0': '𖄰', '1': '𖄱', '2': '𖄲', '3': '𖄳', '4': '𖄴',
+      '5': '𖄵', '6': '𖄶', '7': '𖄷', '8': '𖄸', '9': '𖄹'
+    };
+
+    // Reverse lookup map for Sora Sompeng -> Plain Text decoding
+    const REVERSE_VISUAL_MAP = {};
+    Object.entries(VISUAL_CIPHER_MAP).forEach(([lat, sora]) => {
+      if (!REVERSE_VISUAL_MAP[sora]) {
+        REVERSE_VISUAL_MAP[sora] = lat;
+      }
+    });
+
+    /**
+     * ============================================================================
+     * 2. SANSKRIT & DEVANAGARI TRANSLITERATION ENGINE
+     * ============================================================================
+     * Converts any Sanskrit shloka, mantra, or Hindi text into clean phonetic Latin
+     * with proper inherent 'A' vowel handling, matras, virama (्), and symbols.
+     */
+    const DEV_CONSONANTS = {
+      'क': 'K',  'ख': 'KH', 'ग': 'G',  'घ': 'GH', 'ङ': 'NG',
+      'च': 'CH', 'छ': 'CHH','ज': 'J',  'झ': 'JH', 'ञ': 'NY',
+      'ट': 'T',  'ठ': 'TH', 'ड': 'D',  'ढ': 'DH', 'ण': 'N',
+      'त': 'T',  'थ': 'TH', 'द': 'D',  'ध': 'DH', 'न': 'N',
+      'प': 'P',  'फ': 'PH', 'ब': 'B',  'भ': 'BH', 'म': 'M',
+      'य': 'Y',  'र': 'R',  'ल': 'L',  'ळ': 'L',  'व': 'V',
+      'श': 'SH', 'ष': 'SH', 'स': 'S',  'ह': 'H',
+      // Nukta consonants
+      'क़': 'Q',  'ख़': 'KH', 'ग़': 'GH', 'ज़': 'Z',  'ड़': 'R',  'ढ़': 'RH', 'फ़': 'F'
+    };
+
+    const DEV_VOWELS = {
+      'अ': 'A',  'आ': 'AA', 'इ': 'I',  'ई': 'EE', 'उ': 'U',  'ऊ': 'OO',
+      'ऋ': 'RI', 'ॠ': 'REE','ऌ': 'LI', 'ए': 'E',  'ऐ': 'AI', 'ओ': 'O',  'औ': 'AU'
+    };
+
+    const DEV_MATRAS = {
+      'ा': 'AA', 'ि': 'I',  'ी': 'EE', 'ु': 'U',  'ू': 'OO',
+      'ृ': 'RI', 'ॄ': 'REE','े': 'E',  'ै': 'AI', 'ो': 'O',  'ौ': 'AU',
+      'ॅ': 'E',  'ॉ': 'O'
+    };
+
+    const DEV_DIGITS = {
+      '०': '0', '१': '1', '२': '2', '३': '3', '४': '4',
+      '५': '5', '६': '6', '७': '7', '८': '8', '९': '9'
+    };
+
+    const DEV_SPECIAL = {
+      'ॐ': 'OM ',
+      'ं': 'M',
+      'ँ': 'N',
+      'ः': 'H',
+      'ऽ': '',   // Avagraha
+      '।': '.',
+      '॥': '||'
+    };
+
+    function containsDevanagari(text) {
+      return /[\u0900-\u097F]/.test(text);
+    }
+
+    function transliterateDevanagariToLatin(text) {
+      let result = '';
+      const chars = Array.from(text);
+
+      for (let i = 0; i < chars.length; i++) {
+        const ch = chars[i];
+        const next = chars[i + 1] || '';
+
+        // Handle consonant + nukta combination
+        if (next === '़' && DEV_CONSONANTS[ch + next]) {
+          const combined = ch + next;
+          i++;
+          const afterNukta = chars[i + 1] || '';
+          result += DEV_CONSONANTS[combined];
+          if (afterNukta === '्') {
+            i++; // Virama suppresses inherent 'A'
+          } else if (DEV_MATRAS[afterNukta]) {
+            result += DEV_MATRAS[afterNukta];
+            i++;
+          } else {
+            result += 'A';
+          }
+          continue;
+        }
+
+        // Standard Sanskrit/Hindi Consonants
+        if (DEV_CONSONANTS[ch]) {
+          result += DEV_CONSONANTS[ch];
+          if (next === '्') {
+            // Halant / Virama: suppress inherent 'A' vowel
+            i++;
+          } else if (DEV_MATRAS[next]) {
+            // Dependent vowel sign (Matra) replaces inherent 'A'
+            result += DEV_MATRAS[next];
+            i++;
+          } else {
+            // In Sanskrit mantras, consonants carry inherent 'A'
+            result += 'A';
+          }
+        } else if (DEV_VOWELS[ch]) {
+          result += DEV_VOWELS[ch];
+        } else if (DEV_MATRAS[ch]) {
+          result += DEV_MATRAS[ch];
+        } else if (DEV_DIGITS[ch] !== undefined) {
+          result += DEV_DIGITS[ch];
+        } else if (DEV_SPECIAL[ch] !== undefined) {
+          result += DEV_SPECIAL[ch];
+        } else if (ch === '्' || ch === '़' || ch === '॑' || ch === '॒') {
+          // Skip stray Vedic accents or standalone halant
+          continue;
+        } else {
+          result += ch;
+        }
+      }
+
+      return result;
+    }
+
+    /**
+     * ============================================================================
+     * 3. CORE SORA SOMPENG CONVERSION & AI PROMPT ENGINE
+     * ============================================================================
+     */
+    let currentMode = 'visual'; // 'visual' | 'phonetic' | 'decode'
+    let isPromptEnabled = false;
+
+    function convertTextToSora(rawText, mode) {
+      if (!rawText) return { output: '', romanized: '' };
+
+      if (mode === 'decode') {
+        // Decode Sora Sompeng back to Latin
+        const decoded = Array.from(rawText)
+          .map(ch => REVERSE_VISUAL_MAP[ch] || ch)
+          .join('');
+        return { output: decoded, romanized: '' };
+      }
+
+      // Step 1: Transliterate any Sanskrit/Hindi Devanagari into Latin phonetic form
+      const hasDev = containsDevanagari(rawText);
+      const romanized = hasDev ? transliterateDevanagariToLatin(rawText) : rawText;
+
+      // Step 2: Map uppercase characters to the selected Sora Sompeng map
+      const activeMap = mode === 'phonetic' ? PHONETIC_SORA_MAP : VISUAL_CIPHER_MAP;
+      const upper = romanized.toUpperCase();
+
+      const converted = Array.from(upper)
+        .map(ch => activeMap[ch] !== undefined ? activeMap[ch] : ch)
+        .join('');
+
+      return {
+        output: converted,
+        romanized: hasDev ? romanized.toUpperCase() : ''
+      };
+    }
+
+    // Encodes an AI instruction prefix directly in Sora Sompeng cipher (just like the Binary example)
+    function getSoraAIPrefix() {
+      const instruction = "DECODE THIS SORA SOMPENG CIPHER AND RESPOND DIRECTLY: ";
+      const { output } = convertTextToSora(instruction, 'visual');
+      return output + "\n\n";
+    }
+
+    function processConversion() {
+      const inputEl = document.getElementById('inputField');
+      const outputBox = document.getElementById('outputBox');
+      const charCount = document.getElementById('charCount');
+      const translitStrip = document.getElementById('translitStrip');
+      const translitPreview = document.getElementById('translitPreview');
+
+      const raw = inputEl.value;
+      charCount.innerText = `${Array.from(raw).length} chars`;
+
+      if (!raw && !isPromptEnabled) {
+        outputBox.classList.add('empty');
+        outputBox.innerText = currentMode === 'decode'
+          ? 'Paste Sora Sompeng script above to decode it into English/Sanskrit...'
+          : 'Converted Sora Sompeng script yahan aayega...';
+        translitStrip.classList.add('hidden');
+        return;
+      }
+
+      outputBox.classList.remove('empty');
+      const { output, romanized } = convertTextToSora(raw, currentMode);
+
+      // Show or hide the Sanskrit phonetic bridge strip
+      if (romanized && currentMode !== 'decode') {
+        translitStrip.classList.remove('hidden');
+        translitPreview.innerText = romanized;
+      } else {
+        translitStrip.classList.add('hidden');
+      }
+
+      const finalOutput = (isPromptEnabled && currentMode !== 'decode')
+        ? (getSoraAIPrefix() + output)
+        : output;
+
+      outputBox.innerText = finalOutput;
+    }
+
+    /**
+     * ============================================================================
+     * 4. UI INTERACTIONS, PRESETS & CLIPBOARD
+     * ============================================================================
+     */
+    function setMode(mode) {
+      currentMode = mode;
+      document.getElementById('modeVisualBtn').classList.toggle('active', mode === 'visual');
+      document.getElementById('modePhoneticBtn').classList.toggle('active', mode === 'phonetic');
+      document.getElementById('modeDecodeBtn').classList.toggle('active', mode === 'decode');
+
+      const modeIndicator = document.getElementById('modeIndicator');
+      const inputLabel = document.getElementById('inputLabel');
+      const outputLabel = document.getElementById('outputLabel');
+      const copyBtnText = document.getElementById('copyBtnText');
+
+      if (mode === 'visual') {
+        modeIndicator.innerText = 'Mode: Visual Cipher (A–Z + Sanskrit)';
+        inputLabel.innerText = 'Plain Text / Sanskrit Devanagari Input';
+        outputLabel.innerText = 'Sora Sompeng Stream Output';
+        copyBtnText.innerText = 'Copy Sora Sompeng';
+      } else if (mode === 'phonetic') {
+        modeIndicator.innerText = 'Mode: Authentic Phonetic Sora Lipi';
+        inputLabel.innerText = 'Sanskrit Mantra / Hindi / English Input';
+        outputLabel.innerText = 'Phonetic Sora Sompeng Output';
+        copyBtnText.innerText = 'Copy Sora Sompeng';
+      } else {
+        modeIndicator.innerText = 'Mode: Reverse Decoder (Sora → Text)';
+        inputLabel.innerText = 'Sora Sompeng Script Input (𖄓𖄢𖄡...)';
+        outputLabel.innerText = 'Decoded Plain Text / Mantra';
+        copyBtnText.innerText = 'Copy Decoded Text';
+      }
+
+      processConversion();
+    }
+
+    function toggleAIPrompt() {
+      isPromptEnabled = !isPromptEnabled;
+      const btn = document.getElementById('toggleBtn');
+      const btnText = document.getElementById('toggleBtnText');
+      const led = document.getElementById('aiLed');
+
+      if (isPromptEnabled) {
+        btnText.innerText = 'Prompt for AI: ON';
+        btn.classList.add('active');
+        led.classList.add('on');
+      } else {
+        btnText.innerText = 'Prompt for AI: OFF';
+        btn.classList.remove('active');
+        led.classList.remove('on');
+      }
+
+      processConversion();
+    }
+
+    function loadSample(sampleText) {
+      if (currentMode === 'decode') {
+        setMode('visual');
+      }
+      const inputEl = document.getElementById('inputField');
+      inputEl.value = sampleText;
+      processConversion();
+    }
+
+    function clearAll() {
+      const inputEl = document.getElementById('inputField');
+      inputEl.value = '';
+      processConversion();
+      inputEl.focus();
+    }
+
+    function swapInputOutput() {
+      const outputBox = document.getElementById('outputBox');
+      const inputEl = document.getElementById('inputField');
+      if (outputBox.classList.contains('empty')) return;
+
+      const currentOut = outputBox.innerText;
+      inputEl.value = currentOut;
+
+      if (currentMode !== 'decode') {
+        setMode('decode');
+      } else {
+        setMode('visual');
+      }
+    }
+
+    function copyResult() {
+      const display = document.getElementById('outputBox');
+      const toast = document.getElementById('copyToast');
+      const text = display.innerText;
+
+      if (display.classList.contains('empty') || !text) {
+        return;
+      }
+
+      const showToast = () => {
+        toast.style.opacity = '1';
+        setTimeout(() => { toast.style.opacity = '0'; }, 2200);
+      };
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(text)
+          .then(showToast)
+          .catch(() => fallbackCopy(text, showToast));
+      } else {
+        fallbackCopy(text, showToast);
+      }
+    }
+
+    function fallbackCopy(text, callback) {
+      const tempArea = document.createElement('textarea');
+      tempArea.value = text;
+      tempArea.style.position = 'fixed';
+      tempArea.style.left = '-9999px';
+      document.body.appendChild(tempArea);
+      tempArea.focus();
+      tempArea.select();
+
+      try {
+        document.execCommand('copy');
+        callback();
+      } catch (err) {
+        console.error('Copy failed: ', err);
+      }
+
+      document.body.removeChild(tempArea);
+    }
+
+    // Build Interactive Glyph Key Matrix
+    function buildGlyphMatrix() {
+      const grid = document.getElementById('glyphGrid');
+      grid.innerHTML = '';
+
+      Object.entries(VISUAL_CIPHER_MAP).forEach(([latin, sora]) => {
+        const cell = document.createElement('button');
+        cell.type = 'button';
+        cell.className = 'btn-steel py-1.5 px-2 flex flex-col items-center justify-center gap-0.5 rounded-lg';
+        cell.title = `Click to insert ${sora} (${latin})`;
+        cell.innerHTML = `
+          <span class="text-base text-sky-300 font-normal" style="font-family: 'Noto Sans Sora Sompeng', sans-serif;">${sora}</span>
+          <span class="text-[10px] font-mono text-slate-400">${latin}</span>
+        `;
+        cell.onclick = () => {
+          const inputEl = document.getElementById('inputField');
+          inputEl.value += (currentMode === 'decode' ? sora : latin);
+          processConversion();
+        };
+        grid.appendChild(cell);
+      });
+    }
+
+    function toggleMatrix() {
+      const panel = document.getElementById('glyphMatrixPanel');
+      const label = document.getElementById('matrixToggleLabel');
+      const isHidden = panel.classList.contains('hidden');
+
+      if (isHidden) {
+        panel.classList.remove('hidden');
+        label.innerHTML = '&#9652; Hide Sora Sompeng Key Matrix';
+      } else {
+        panel.classList.add('hidden');
+        label.innerHTML = '&#9662; View Sora Sompeng A–Z &amp; 0–9 Key Matrix';
+      }
+    }
+
+    // Initialize with a Sanskrit Mantra on load so user sees immediate output
+    window.onload = function () {
+      buildGlyphMatrix();
+      loadSample('ॐ नमः शिवाय | CAN YOU SEE THIS TEST ?');
+    };
+  </script>
+</body>
+</html>
